@@ -3,8 +3,40 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImage extends Model
 {
-    //
+    use HasFactory;
+    protected $fillable = [
+        'product_id',
+        'image_path',
+        'alt_text',
+        'is_primary',
+        'sort_order',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_primary' => 'boolean',
+        ];
+    }
+
+    // ==================== Relationships ====================
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    // ==================== Accessors ====================
+
+// بدل ما ترجع path، بترجع full URL
+    public function getUrlAttribute(): string
+    {
+        return Storage::url($this->image_path);
+    }
 }
